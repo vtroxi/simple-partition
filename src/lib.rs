@@ -1,12 +1,11 @@
-// Graph partitioning using simulated annealing based on Ja-be-Ja:
-// https://www.diva-portal.org/smash/get/diva2:1043244/FULLTEXT01.pdf
-
 use anyhow::{Context, Result};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 use std::io::{BufRead, BufReader, Read};
-use std::ops::{Range, RangeInclusive};
+
+// TODO maybe implement this as well: https://www.researchgate.net/publication/2505803_New_Faster_Kernighan-Lin-Type_Graph-Partitioning_Algorithms
+// And use it to do a recursive bisection with min and max partition sizes (what I need).
 
 fn divide_round_up(a: u32, b: u32) -> u32 {
     (a + b - 1) / b
@@ -188,6 +187,8 @@ impl Graph {
 
     // Partitioning
 
+    /// Splits the graph into a given number of partitions while minimizing the edge cut cost.
+    /// This algorithm uses simulated annealing based on the [Ja-be-Ja](https://www.diva-portal.org/smash/get/diva2:1043244/FULLTEXT01.pdf) paper.
     pub fn partition(&mut self, config: &PartitioningConfig, partitions: u32) {
         let mut rng = StdRng::seed_from_u64(config.rng_seed);
 
