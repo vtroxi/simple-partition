@@ -5,7 +5,7 @@ use std::collections::{HashSet, VecDeque};
 use std::io::{BufRead, BufReader, Read};
 
 // TODO maybe implement this as well: https://www.researchgate.net/publication/2505803_New_Faster_Kernighan-Lin-Type_Graph-Partitioning_Algorithms
-// And use it to do a recursive bisection with min and max partition sizes (what I need).
+// And use it to do a recursive bisection to satisfy partitioning min and max partition sizes.
 
 fn divide_round_up(a: u32, b: u32) -> u32 {
     (a + b - 1) / b
