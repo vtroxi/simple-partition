@@ -1,7 +1,8 @@
-use anyhow::{Context, Result};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::collections::{HashSet, VecDeque};
+use std::error;
+use std::error::Error;
 use std::io::{BufRead, BufReader, Read};
 
 // TODO maybe implement this as well: https://www.researchgate.net/publication/2505803_New_Faster_Kernighan-Lin-Type_Graph-Partitioning_Algorithms
@@ -32,16 +33,14 @@ impl Graph {
     pub const MAX_EDGES_PER_VERTEX: u32 = 2048;
 
     /// Deserializes an unweighted graph in the format used by the METIS library.
-    pub fn deserialize_metis<R: Read>(r: &mut R) -> Result<Self> {
+    pub fn deserialize_metis<R: Read>(r: &mut R) -> Result<Self, Box<dyn Error>> {
         let reader = BufReader::new(r);
         let mut lines = reader.lines().map(|l| l.unwrap());
 
         // Parse the header
-        let header = lines.next().context("could not get header line")?;
+        let header = lines.next().ok_or("could not get header line")?;
         let header_parts = header.split_ascii_whitespace().collect::<Vec<_>>();
-        let vertex_count = header_parts[0]
-            .parse::<usize>()
-            .context("could not parse vertex count")?;
+        let vertex_count = header_parts[0].parse::<usize>()?;
         //let edge_count = header_parts[1].parse::<usize>().context("could not parse edge count")?;
 
         let mut graph = Graph {
