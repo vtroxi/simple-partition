@@ -1,3 +1,4 @@
+use crate::InitialPartitioning::Modulo;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::collections::{HashSet, VecDeque};
@@ -147,8 +148,23 @@ impl Graph {
             .len() as u32
     }
 
+    /// Returns the maximum partition color (id) in the graph.
+    pub fn max_partition_color(&self) -> u32 {
+        self.vertices.iter().map(|v| v.color).max().unwrap_or(0)
+    }
+
+    /// Returns the size of each partition in the graph.
+    /// The value at index i represents the size of the partition with the color i.
+    pub fn partition_sizes(&self) -> Vec<u32> {
+        let mut sizes = vec![0u32; self.max_partition_color() as usize + 1];
+        for v in self.vertices.iter() {
+            sizes[v.color as usize] += 1;
+        }
+        sizes
+    }
+
     /// Calculates the min, max and average partition size.
-    pub fn partition_sizes(&self) -> (u32, u32, u32) {
+    pub fn partition_infos(&self) -> (u32, u32, u32) {
         let mut counts = vec![0u32; self.count_partitions() as usize];
         for v in self.vertices.iter() {
             counts[v.color as usize] += 1;
@@ -182,6 +198,40 @@ impl Graph {
             }
         }
         degree
+    }
+
+    /// This function counts the number of directly connected patches for a given partition.
+    /// Ideally this should be 1, meaning all vertices of a partition are directly connected.
+    pub fn count_partition_parts(&self, color: u32, partition_size: u32) -> u32 {
+        let mut parts = 0;
+
+        let mut queue = VecDeque::new();
+        let mut visited = HashSet::with_capacity(partition_size as usize);
+        while visited.len() < partition_size as usize {
+            // Each new starting point means that we have one part more.
+            parts += 1;
+            let start = self
+                .vertices
+                .iter()
+                .enumerate()
+                .position(|(vx, v)| v.color == color && !visited.contains(&(vx as u32)))
+                .unwrap();
+            queue.push_back(start as u32);
+
+            while let Some(vx) = queue.pop_front() {
+                if !visited.contains(&vx) {
+                    visited.insert(vx);
+
+                    for e in self.vertices[vx as usize].edges.iter() {
+                        if !visited.contains(&e.dst) && self.vertices[e.dst as usize].color == color
+                        {
+                            queue.push_back(e.dst);
+                        }
+                    }
+                }
+            }
+        }
+        parts
     }
 
     // Partitioning
