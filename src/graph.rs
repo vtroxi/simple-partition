@@ -89,7 +89,7 @@ impl Graph {
     pub fn to_partitioned_graphs(&self) -> Vec<Graph> {
         // Remapping table for vertex indices
         let mut new_indices = vec![0u32; self.vertices.len()];
-        let mut graphs = vec![Graph::default(); self.max_partition_color() as usize];
+        let mut graphs = vec![Graph::default(); self.max_partition_color() as usize + 1];
 
         // Push vertices
         for (i, v) in self.vertices.iter().enumerate() {
