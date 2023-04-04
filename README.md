@@ -7,4 +7,4 @@
 - Graph utility functions and partitioning metrics
 
 #### Note
-If you're looking for higher quality partitioning using multilevel techniques, you might be interested in my cross-platform [METIS wrapper for Rust](https://github.com/vtroxi/metis-rs)
+If you're looking for higher quality partitioning using multilevel techniques, you might be interested in my cross-platform [METIS wrapper for Rust](https://github.com/vtroxi/metis-rs).

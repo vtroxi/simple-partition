@@ -1,7 +1,6 @@
-use crate::{divide_round_up, Graph, InitialPartitioningMethod};
+use crate::{Graph, InitialPartitioningMethod};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
-use std::collections::VecDeque;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum NeighbourSelection {
